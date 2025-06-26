@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: onecampus
+    ports:
+      - "5432:5432"
+    volumes:
+      - /c/Users/ranji.JAGTAP/OneDrive/Desktop/data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: onecampus_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
