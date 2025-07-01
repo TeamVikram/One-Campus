@@ -1,25 +1,24 @@
 version: "3.8"
 
 services:
-  db:
-    image: postgres:16
-    container_name: postgres_db
+  redis:
+    image: redis:latest
+    container_name: redis
     restart: always
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: qwerty
-      POSTGRES_DB: onecampus
     ports:
-      - "5432:5432"
-    volumes:
-      - /c/Users/ranji.JAGTAP/OneDrive/Desktop/data:/var/lib/postgresql/data
+      - "6379:6379"
+      - "8001:8001"
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: onecampus_backend
+    restart: always
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
