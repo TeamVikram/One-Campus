@@ -1,9 +1,8 @@
 import { sql } from "./../config/db.js";
-import { v4 as uuidv4 } from "uuid";
+import generateUniqueAlphaNumericId from "../lib/idGenerator.js";
 import client from "../redis/client.js";
 const timeToStoreRedisCache = 600; // 10 mins
 
-// Helper function to store single academic year data in Redis using hash format
 export const storeSingleAcademicYearInRedis = async (academicRecord) => {
   try {
     const hashKey = `academic_year:${academicRecord.academic_year_id}`;
@@ -46,14 +45,14 @@ export const createAcademicYear = async (req, res) => {
   }
 
   try {
-    const newId = uuidv4();
+    const newId = generateUniqueAlphaNumericId(12);
     const AcademicYearData = await sql`
       INSERT INTO academic_year (academic_year_id, principal_id, principal_name, email, academic_year)
       VALUES (${newId},${principal_id},${principal_name},${email},${academic_year})
       RETURNING *
     `;
 
-    console.log("Data inserted into PostgreSQL:", AcademicYearData);
+    console.log("Data inserted into Database:", AcademicYearData);
     const academicRecord = AcademicYearData[0];
 
     // Use the helper function to store in Redis
